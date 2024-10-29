@@ -1,217 +1,119 @@
-<!doctype html>
-<html lang="en">
+{%extends 'layouts/base.html' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-    <style>
-        .form-check {
-            margin-top: 95px;
-        }
 
-        .custom-btn {
-        background-color: grey;
-        color: black;
-        border: 2px solid black;
-      }
+{% block content %}
 
-      .custom-btn:hover {
-        background-color: darkgrey;
-      }
-    </style>
-</head>
+<div class="d-flex flex-column gap-3">
+    <div class="row">
+        <div class="col-3">
+            <div class="border mb-2" style="height: 170px; text-align: center" >
+                        <img src="../static/img/amogus.jpg" alt="Avatar" class="img-fluid" width="100" height="100">
+            </div>
+            <input class="form-control" type="number" value="5" placeholder="Default input"
+                   aria-label="default input example">
+        </div>
+        <div class="col-9">
 
-<body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand" href="#"></a>
+            <h4 class="card-title"><a href="">{{ question.title }}</a></h4>
+            <p class="card-text">{{ question.content }}
+            </p>
 
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Ask</button>
-                </form>
+            <div class="d-flex gap-5">
+                <div>
+                    Tags:
+                    <a href="#" class="card-link">Another link</a>
+                    <a href="#" class="card-link">Another link</a>
+                    <a href="#" class="card-link">Another link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="d-flex gap-1">
-                    <img src="asda.jpg" alt="Avatar" class="img-thumbnail">
-                    <div>
-                        <div>
-                            dr pepper
-                        </div>
-                        <a href="#">settings</a>
-                        <a href="#">log out</a>
+    <hr>
+
+    <div class="card w-100" style="width: 18rem;">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    <div class="border mb-2" style="height: 100px; text-align: center" >
+                        <img src="../static/img/amogus.jpg" alt="Avatar" class="img-fluid" width="50" height="50">
+                    </div>
+                    <input class="form-control" type="number" value="5" placeholder="Default input"
+                        aria-label="default input example">
+                </div>
+                <div class="col-9">
+
+                    <p class="card-text">Some quick example text to build on the card title and make up
+                        the bulk
+                        of the card's content.</p>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
+                        <label class="form-check-label" for="flexCheckDefault1">
+                            Correct!
+                        </label>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <main class="container mt-3">
-
-        <div class="row">
-            <div class="col-9">
-                <div class="d-flex flex-column gap-3">
-                    <div class="row">
-                        <div class="col-3">
-                            <div class="border mb-2" style="height: 170px">
-                                <img src="jpg.jpg" alt="Avatar" class="img-fluid">
-                            </div>
-                            <input class="form-control" type="number" value="5" placeholder="Default input"
-                                   aria-label="default input example">
-                        </div>
-                        <div class="col-9">
-
-                            <h4 class="card-title">Card title</h4>
-                            <p class="card-text">Some quick example text to build on the card title and make up
-                                the bulk
-                                of the card's content. Some quick example text to build on the card title and make up
-                                the bulk
-                                of the card's content. Some quick example text to build on the card title and make up
-                                the bulk
-                                of the card's content.Some quick example text to build on the card title and make up
-                                the bulk
-                                of the card's content.Some quick example text to build on the card title and make up
-                                the bulk
-                                of the card's content.Some quick example text to build on the card title and make up
-                                the bulk
-                                of the card's content.
-                            </p>
-
-                            <div class="d-flex gap-5">
-                                <div>
-                                    Tags:
-                                    <a href="#" class="card-link">Another link</a>
-                                    <a href="#" class="card-link">Another link</a>
-                                    <a href="#" class="card-link">Another link</a>
-                                    <a href="#" class="card-link">Another link</a>
-                                </div>
-                            </div>
-                        </div>
+    <div class="card w-100" style="width: 18rem;">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    <div class="border mb-2" style="height: 100px; text-align: center" >
+                        <img src="../static/img/amogus.jpg" alt="Avatar" class="img-fluid" width="50" height="50">
                     </div>
-
-                    <hr>
-
-                    <div class="card w-100" style="width: 18rem;">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-3">
-                                    <div class="border mb-2" style="height: 100px">
-                                        <img src="jpg.jpg" alt="Avatar" class="img-fluid">
-                                    </div>
-                                    <input class="form-control" type="number" value="5" placeholder="Default input"
-                                        aria-label="default input example">
-                                </div>
-                                <div class="col-9">
-
-                                    <p class="card-text">Some quick example text to build on the card title and make up
-                                        the bulk
-                                        of the card's content.</p>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
-                                        <label class="form-check-label" for="flexCheckDefault1">
-                                            Correct!
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card w-100" style="width: 18rem;">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-3">
-                                    <div class="border mb-2" style="height: 100px">
-                                        <img src="jpg.jpg" alt="Avatar" class="img-fluid">
-                                    </div>
-                                    <input class="form-control" type="number" value="5" placeholder="Default input"
-                                        aria-label="default input example">
-                                </div>
-                                <div class="col-9">
-
-                                    <p class="card-text">Some quick example text to build on the card title and make up
-                                        the bulk
-                                        of the card's content.</p>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault2">
-                                        <label class="form-check-label" for="flexCheckDefault2">
-                                            Correct!
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <form>
-                        <div class="form-floating">
-                            <textarea class="form-control mb-3" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
-                            <label for="floatingTextarea2">Enter ur answer here</label>
-                            <div class="row-3 gap-3">
-                                <button class="btn custom-btn" type="submit">Answer</button>
-                            </div>
-                        </div>
-                    </form>
+                    <input class="form-control" type="number" value="5" placeholder="Default input"
+                        aria-label="default input example">
                 </div>
-                <nav aria-label="Page navigation example" class="mt-3">
-                    <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="col-9">
 
-            </div>
-            <div class="col">
-                <section class="mb-3">
-                    <h2>Popular Tags</h2>
-                    <div>
-                        <span class="badge text-bg-primary">Primary</span>
-                        <span class="badge text-bg-secondary">Secondary</span>
-                        <span class="badge text-bg-success">Success</span>
-                        <span class="badge text-bg-danger">Danger</span>
-                        <span class="badge text-bg-warning">Warning</span>
-                        <span class="badge text-bg-info">Info</span>
-                        <span class="badge text-bg-light">Light</span>
-                        <span class="badge text-bg-dark">Dark</span>
+                    <p class="card-text">Some quick example text to build on the card title and make up
+                        the bulk
+                        of the card's content.</p>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault2">
+                        <label class="form-check-label" for="flexCheckDefault2">
+                            Correct!
+                        </label>
                     </div>
-                </section>
-
-                <section>
-                    <h2>Best members</h2>
-                    <div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                        </ul>
-                    </div>
-                </section>
-
+                </div>
             </div>
-
         </div>
+    </div>
 
-    </main>
-    <script src="../static/js/bootstrap.min.js"></script>
-</body>
+    <hr>
 
-</html>
+    <form>
+        <div class="form-floating">
+            <textarea class="form-control mb-3" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
+            <label for="floatingTextarea2">Enter ur answer here</label>
+            <div class="row-3 gap-3">
+                <button class="btn custom-btn" type="submit">Answer</button>
+            </div>
+        </div>
+    </form>
+</div>
+<nav aria-label="Page navigation example" class="mt-3">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+{% endblock %}

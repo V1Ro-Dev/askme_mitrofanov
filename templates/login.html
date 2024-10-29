@@ -1,114 +1,37 @@
-<!doctype html>
-<html lang="en">
+{% extends 'layouts/base.html' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-    <style>
-      .custom-btn {
-        background-color: green;
-        color: white;
-        border: 2px solid black;
-      }
+{% block content %}
 
-      .custom-btn:hover {
-        background-color: darkgreen;
-      }
-    </style>
+<div class="d-flex gap-3 align-items-center">
+    <h1>Log in</h1>
+</div>
 
-</head>
 
-<body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand" href="#"></a>
-
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn custom-btn" type="submit">Ask</button>
-                </form>
-
-                <div class="d-flex gap-1">
-                    <div class="d-flex gap-3">
-                        <a href="#">log in</a>
-                        <a href="#">register</a>
-                    </div>
-                </div>
-            </div>
+<p style="color: red">Sorry, wrong password</p>
+<form>
+      <div class="row mb-3">
+        <label for="inputEmail3" class="col-sm-1 col-form-label">Email</label>
+        <div class="col-sm-3">
+          <input type="text" class="form-control" id="inputEmail3" placeholder="Enter your login here" required maxlength="20">
         </div>
-    </nav>
-
-    <main class="container mt-3">
-        <div class="d-flex gap-3 align-items-center">
-            <h1>Log in</h1>
+      </div>
+      <div class="row mb-3">
+        <label for="inputPassword3" class="col-sm-1 col-form-label">Password</label>
+        <div class="col-sm-3">
+          <input type="password" class="form-control" id="inputPassword3" placeholder="********" required maxlength="20">
         </div>
-
-        <div class="row">
-            <div class="col-9">
-                <p style="color: red">Sorry, wrong password</p>
-                <form>
-                      <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-1 col-form-label">Email</label>
-                        <div class="col-sm-3">
-                          <input type="text" class="form-control" id="inputEmail3" placeholder="Enter your login here" required maxlength="20">
-                        </div>
-                      </div>
-                      <div class="row mb-3">
-                        <label for="inputPassword3" class="col-sm-1 col-form-label">Password</label>
-                        <div class="col-sm-3">
-                          <input type="password" class="form-control" id="inputPassword3" placeholder="********" required maxlength="20">
-                        </div>
-                      </div>
-                      <div class="row mb-3">
-                        <div class="col-sm-11 offset-sm-1">
-                            <button class="btn btn-outline-success" type="submit">Log in</button>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-11 offset-sm-1">
-                            <a href="./registration.html">Create new account</a>
-                        </div>
-                    </div>
-                    </form>
-            </div>
-            <div class="col">
-                <section class="mb-3">
-                    <h2>Popular Tags</h2>
-                    <div>
-                        <span class="badge text-bg-primary">Primary</span>
-                        <span class="badge text-bg-secondary">Secondary</span>
-                        <span class="badge text-bg-success">Success</span>
-                        <span class="badge text-bg-danger">Danger</span>
-                        <span class="badge text-bg-warning">Warning</span>
-                        <span class="badge text-bg-info">Info</span>
-                        <span class="badge text-bg-light">Light</span>
-                        <span class="badge text-bg-dark">Dark</span>
-                    </div>
-                </section>
-
-                <section>
-                    <h2>Best members</h2>
-                    <div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                            <li class="list-group-item"><a href="#">Member</a></li>
-                        </ul>
-                    </div>
-                </section>
-
-            </div>
-
+      </div>
+      <div class="row mb-3">
+        <div class="col-sm-11 offset-sm-1">
+            <button class="btn btn-outline-success" type="submit">Log in</button>
         </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-11 offset-sm-1">
+            <a href="./registration.html">Create new account</a>
+        </div>
+    </div>
+</form>
 
+{% endblock %}
 
-    </main>
-    <script src="../static/js/bootstrap.min.js"></script>
-</body>
-
-</html>
