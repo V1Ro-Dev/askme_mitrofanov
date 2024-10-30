@@ -17,15 +17,13 @@
                     <p class="card-text">{{ question.content }}</p>
 
                     <div class="d-flex gap-5">
-                        <a href="#" class="card-link">Answer (3)</a>
+                        <a href="{% url 'question' question_id=question.id %}" class="card-link">Answer (3)</a>
                         <div>
 
                             Tags:
-
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
+                            {% for tag in question.tags%}
+                            {% include 'components/question_tags.html' %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

@@ -1,45 +1,94 @@
+import random
+
 from django.shortcuts import render
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
+TAGS = [{'name': 'Perl'},
+        {'name': 'Python'},
+        {'name': 'MySQL'},
+        {'name': 'Django'},
+        {'name': 'Mail.ru'},
+        {'name': 'Firefox'}]
+
 
 QUESTIONS = [
-        {
-            'id': i,
-            'title': f'question {i}',
-            'content': f'long long lore {i}'
-        } for i in range(10)
-    ]
+    {
+        'id': i,
+        'title': f'question {i}',
+        'content': f'long long lore {i}',
+        'tags': TAGS[0:3]
+    } for i in range(20)
+]
+
+ANSWERS = [[0] * 10 for k in range(10)]
+for i in range(10):
+    for j in range(10):
+        ANSWERS[i][j] = {
+            'id': j,
+            'content': f'Long long answer {j}'
+        }
+
+MEMBERS = [{'name': 'Mr. Freeman'},
+           {'name': 'Dr. House'},
+           {'name': 'Bender'},
+           {'name': 'Walter White'},
+           {'name': 'Sam'}]
 
 
-def paginate(objects, page, per_page=3):
-    paginator = Paginator(objects, per_page)
-    return paginator.page(page)
+def tag_selection(questions, tag_name):
+    result = []
+    for i in range(len(questions)):
+        tags = questions[i]['tags']
+        for j in range(len(tags)):
+            if tag_name == tags[j]['name']:
+                result.append(questions[i])
+    return result
+
+
+def paginate(object_list, request, per_page=3):
+    paginator = Paginator(object_list, per_page)
+    page = request.GET.get('page', 1)
+    try:
+        paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(1)
+    else:
+        return paginator.page(page)
 
 
 def index(request):
-    page = request.GET.get('page', 1)
-    return render(request, 'index.html', context={'questions': paginate(QUESTIONS, page)})
+    page_obj = paginate(QUESTIONS, request)
+    questions = paginate(QUESTIONS, request)
+    return render(request, 'index.html', context={'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
 
 
 def question(request, question_id):
-    item = QUESTIONS[question_id]
-    return render(request, 'question.html', context={'question': item})
+    list_of_answers = ANSWERS[question_id]
+    page_obj = paginate(list_of_answers, request)
+    answers = paginate(list_of_answers, request)
+    return render(request, 'question.html', context={'answers': answers, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
 
 
 def login(request):
-    return render(request, 'login.html')
+    return render(request, 'login.html', context={'tags': TAGS, 'members': MEMBERS})
 
 
-def registration(request):
-    return render(request, 'registration.html')
+def signup(request):
+    return render(request, 'signup.html', context={'tags': TAGS, 'members': MEMBERS})
 
 
 def settings(request):
-    return render(request, 'settings.html')
-
-
-def tag(request):
-    return render(request, 'tag.html')
+    return render(request, 'settings.html', context={'tags': TAGS, 'members': MEMBERS})
 
 
 def ask(request):
-    return render(request, 'ask.html')
+    return render(request, 'ask.html', context={'tags': TAGS, 'members': MEMBERS})
+
+
+def tag(request, tag_name):
+    questions = paginate(tag_selection(QUESTIONS, tag_name), request)
+    page_obj = paginate(tag_selection(QUESTIONS, tag_name), request)
+    return render(request, 'tag.html', context={'tag_name': tag_name, 'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
+

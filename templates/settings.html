@@ -1,5 +1,6 @@
 {%extends 'layouts/base.html' %}
 
+{% load static %}
 
 {% block content %}
 
@@ -29,7 +30,7 @@
     <div class="row mb-3">
         <label for="formFile" class="col-sm-2 col-form-label">Upload avatar</label>
         <div class="col-sm-4">
-            <img src="asda.jpg" alt="Avatar" class="img-thumbnail mb-3" style="width: 150px; height: 150px;">
+            <img src="{% static 'img/profile.jpg' %}" alt="Avatar" class="img-thumbnail mb-3" style="width: 150px; height: 150px;">
             <input class="form-control" type="file" id="formFile">
         </div>
     </div>

@@ -4,132 +4,16 @@
 {% block content %}
 
 <div class="d-flex gap-3 align-items-center">
-    <h1>Tag: some tag</h1>
+    <h1>Tag: {{tag_name}}</h1>
 </div>
 
+{% for question in questions %}
 
-<div class="d-flex flex-column gap-3">
-    <div class="card w-100" style="width: 18rem;">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-3">
-                    <div class="border mb-2" style="height: 100px; text-align: center" >
-                        <img src="../static/img/amogus.jpg" alt="Avatar" class="img-fluid" width="50" height="50">
-                    </div>
-                    <input class="form-control" type="number" value="5" placeholder="Default input"
-                        aria-label="default input example">
+{% include 'components/question_item.html' %}
 
-                </div>
-                <div class="col-9">
+{% endfor %}
 
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up
-                        the bulk
-                        of the card's content.</p>
-
-                    <div class="d-flex gap-5">
-                        <a href="#" class="card-link">Answer (3)</a>
-                        <div>
-
-                            Tags:
-
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card w-100" style="width: 18rem;">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-3">
-                    <div class="border mb-2" style="height: 100px; text-align: center" >
-                        <img src="../static/img/amogus.jpg" alt="Avatar" class="img-fluid" width="50" height="50">
-                    </div>
-                    <input class="form-control" type="number" value="5" placeholder="Default input"
-                        aria-label="default input example">
-
-                </div>
-                <div class="col-9">
-
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up
-                        the bulk
-                        of the card's content.</p>
-
-                    <div class="d-flex gap-5">
-                        <a href="#" class="card-link">Answer (3)</a>
-                        <div>
-
-                            Tags:
-
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card w-100" style="width: 18rem;">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-3">
-                    <div class="border mb-2" style="height: 100px; text-align: center" >
-                        <img src="../static/img/amogus.jpg" alt="Avatar" class="img-fluid" width="50" height="50">
-                    </div>
-                    <input class="form-control" type="number" value="5" placeholder="Default input"
-                        aria-label="default input example">
-
-                </div>
-                <div class="col-9">
-
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up
-                        the bulk
-                        of the card's content.</p>
-
-                    <div class="d-flex gap-5">
-                        <a href="#" class="card-link">Answer (3)</a>
-                        <div>
-
-                            Tags:
-
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                            <a href="#" class="card-link">Another link</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<nav aria-label="Page navigation example" class="mt-3">
-    <ul class="pagination">
-        <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+{% include 'components/pagination.html' %}
 
 {% endblock %}
 
