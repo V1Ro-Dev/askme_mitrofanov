@@ -10,7 +10,6 @@ TAGS = [{'name': 'Perl'},
         {'name': 'Mail.ru'},
         {'name': 'Firefox'}]
 
-
 QUESTIONS = [
     {
         'id': i,
@@ -45,6 +44,12 @@ def tag_selection(questions, tag_name):
     return result
 
 
+def get_question_by_id(question_id):
+    for dic in QUESTIONS:
+        if dic['id'] == question_id:
+            return dic
+
+
 def paginate(object_list, request, per_page=3):
     paginator = Paginator(object_list, per_page)
     page = request.GET.get('page', 1)
@@ -61,14 +66,18 @@ def paginate(object_list, request, per_page=3):
 def index(request):
     page_obj = paginate(QUESTIONS, request)
     questions = paginate(QUESTIONS, request)
-    return render(request, 'index.html', context={'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
+    return render(request, 'index.html',
+                  context={'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
 
 
 def question(request, question_id):
     list_of_answers = ANSWERS[question_id]
     page_obj = paginate(list_of_answers, request)
     answers = paginate(list_of_answers, request)
-    return render(request, 'question.html', context={'answers': answers, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
+    question_item = get_question_by_id(question_id)
+    return render(request, 'question.html',
+                  context={'question': question_item, 'answers': answers, 'page_obj': page_obj, 'tags': TAGS,
+                           'members': MEMBERS})
 
 
 def login(request):
@@ -90,5 +99,13 @@ def ask(request):
 def tag(request, tag_name):
     questions = paginate(tag_selection(QUESTIONS, tag_name), request)
     page_obj = paginate(tag_selection(QUESTIONS, tag_name), request)
-    return render(request, 'tag.html', context={'tag_name': tag_name, 'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
+    return render(request, 'tag.html',
+                  context={'tag_name': tag_name, 'questions': questions, 'page_obj': page_obj, 'tags': TAGS,
+                           'members': MEMBERS})
 
+
+def hot(request):
+    page_obj = paginate(QUESTIONS, request)
+    questions = paginate(QUESTIONS, request)
+    return render(request, 'index.html',
+                  context={'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
