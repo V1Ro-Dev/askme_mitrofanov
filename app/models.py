@@ -2,60 +2,98 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class QuestionManager(models.Manager):
+    def get_new_questions(self):
+        return self.order_by('created_at')
+
+    def get_hot_questions(self):
+        return self.order_by('-likes')
+
+    def get_questions_by_tag(self, tag_name):
+        return self.filter(tags__name=tag_name)
+
+
+class AnswerManager(models.Manager):
+
+    def get_answers(self, question):
+        return self.filter(question=question).order_by('-date')
+
+
+class TagManager(models.Manager):
+
+    def get_popular_tags(self):
+        return self.annotate(num_question=models.Count('question')).order_by('-num_question')[:9]
+
+
+class ProfileManager(models.Manager):
+
+    def get_popular_profiles(self):
+        return self.all()[0:10]
+
+
 class Profile(models.Model):
-    profile = models.OneToOneField(User, null=True, on_delete=models.PROTECT, default="")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
     avatar = models.ImageField(null=True, upload_to='avatar/', blank=True, default='profile.jpg')
 
-    def __str__(self):
-        return self.profile
-
-
-class Question(models.Model):
-    title = models.CharField(max_length=30, blank=False)
-    content = models.CharField(max_length=300, blank=False)
-    profile = models.ForeignKey('Profile', on_delete=models.PROTECT, blank=True, null=True, default="")
-    tags = models.ManyToManyField('Tag', blank=True)
-    likes = models.IntegerField(default=0)
-    date = models.DateField(blank=False, null=True)
+    objects = ProfileManager()
 
     def __str__(self):
-        return self.title
+        return self.user.username
 
 
 class Tag(models.Model):
-    title = models.CharField(blank=False, max_length=10)
+    name = models.CharField(max_length=32)
+
+    objects = TagManager()
+
+    def __str__(self):
+        return self.name
+
+
+class Question(models.Model):
+    title = models.CharField(max_length=128)
+    content = models.TextField(max_length=512)
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, blank=True, null=True, default="")
+    tags = models.ManyToManyField(Tag, blank=True)
+    likes = models.IntegerField(default=0)
+    amount_of_answers = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = QuestionManager()
 
     def __str__(self):
         return self.title
 
 
 class Answer(models.Model):
-    question = models.ForeignKey('Question', on_delete=models.CASCADE, blank=False, default="")
-    content = models.TextField(blank=False)
-    profile = models.ForeignKey('Profile', on_delete=models.PROTECT, blank=True, null=True, default="")
-    rating = models.IntegerField(default=0)
-    date = models.DateField(blank=False, null=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, default="")
+    content = models.TextField(max_length=512)
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, blank=True, null=True, default="")
+    likes = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = AnswerManager()
 
 
 class QuestionLike(models.Model):
-    profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
+    author = models.ForeignKey('Profile', on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
-    like = models.BooleanField()
+    like = models.BooleanField(default=0)
 
-    class Meta:
-        unique_together = ('question', 'user')
+    # class Meta:
+    #     unique_together = ('question', 'author')
 
     def __str__(self):
-        return self.profile
+        return self.author
 
 
 class AnswerLike(models.Model):
-    profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
+    author = models.ForeignKey('Profile', on_delete=models.CASCADE)
     answer = models.ForeignKey('Answer', on_delete=models.CASCADE)
-    like = models.BooleanField()
+    like = models.BooleanField(default=0)
 
-    class Meta:
-        unique_together = ('answer', 'user')
+    # class Meta:
+    #     unique_together = ('answer', 'author')
 
     def __str__(self):
-        return self.profile
+        return self.author
