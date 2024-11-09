@@ -16,7 +16,7 @@ class QuestionManager(models.Manager):
 class AnswerManager(models.Manager):
 
     def get_answers(self, question):
-        return self.filter(question=question).order_by('-date')
+        return self.filter(question=question).order_by('-created_at')
 
 
 class TagManager(models.Manager):
@@ -28,7 +28,7 @@ class TagManager(models.Manager):
 class ProfileManager(models.Manager):
 
     def get_popular_profiles(self):
-        return self.all()[0:10]
+        return self.all()[:9]
 
 
 class Profile(models.Model):

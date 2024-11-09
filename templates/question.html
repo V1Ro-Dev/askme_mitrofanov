@@ -18,7 +18,7 @@
                             <p class="card-text">{{question.content}}
                             </p>
                             <div class="d-flex gap-5">
-                                {% for tag in question.tags %}
+                                {% for tag in question.tags.all %}
                                 {% include 'components/tag_item.html' %}
                                 {% endfor %}
                             </div>

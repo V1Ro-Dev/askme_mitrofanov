@@ -1,53 +1,8 @@
 import random
 
-from django.shortcuts import render
+from django.shortcuts import render, Http404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
-TAGS = [{'name': 'Perl'},
-        {'name': 'Python'},
-        {'name': 'MySQL'},
-        {'name': 'Django'},
-        {'name': 'Mail.ru'},
-        {'name': 'Firefox'}]
-
-QUESTIONS = [
-    {
-        'id': i,
-        'title': f'question {i}',
-        'content': f'long long lore {i}',
-        'tags': TAGS[0:3]
-    } for i in range(20)
-]
-
-ANSWERS = [[0] * 10 for k in range(10)]
-for i in range(10):
-    for j in range(10):
-        ANSWERS[i][j] = {
-            'id': j,
-            'content': f'Long long answer {j}'
-        }
-
-MEMBERS = [{'name': 'Mr. Freeman'},
-           {'name': 'Dr. House'},
-           {'name': 'Bender'},
-           {'name': 'Walter White'},
-           {'name': 'Sam'}]
-
-
-def tag_selection(questions, tag_name):
-    result = []
-    for i in range(len(questions)):
-        tags = questions[i]['tags']
-        for j in range(len(tags)):
-            if tag_name == tags[j]['name']:
-                result.append(questions[i])
-    return result
-
-
-def get_question_by_id(question_id):
-    for dic in QUESTIONS:
-        if dic['id'] == question_id:
-            return dic
+from app import models
 
 
 def paginate(object_list, request, per_page=3):
@@ -64,48 +19,60 @@ def paginate(object_list, request, per_page=3):
 
 
 def index(request):
-    page_obj = paginate(QUESTIONS, request)
-    questions = paginate(QUESTIONS, request)
+    questions = paginate(models.Question.objects.get_new_questions(), request)
+    page_obj = paginate(models.Question.objects.get_new_questions(), request)
     return render(request, 'index.html',
-                  context={'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
+                  context={'questions': questions, 'page_obj': page_obj,
+                           'tags': models.Tag.objects.get_popular_tags(),
+                           'members': models.Profile.objects.get_popular_profiles()})
 
 
 def question(request, question_id):
-    list_of_answers = ANSWERS[question_id]
-    page_obj = paginate(list_of_answers, request)
-    answers = paginate(list_of_answers, request)
-    question_item = get_question_by_id(question_id)
+    answers = paginate(models.Answer.objects.get_answers(question_id), request)
+    page_obj = paginate(models.Answer.objects.get_answers(question_id), request)
+    try:
+        question_item = models.Question.objects.get(id=question_id)
+    except models.Question.DoesNotExist:
+        raise Http404('Question does not exist')
     return render(request, 'question.html',
-                  context={'question': question_item, 'answers': answers, 'page_obj': page_obj, 'tags': TAGS,
-                           'members': MEMBERS})
+                  context={'question': question_item, 'answers': answers,
+                           'page_obj': page_obj, 'tags': models.Tag.objects.get_popular_tags(),
+                           'members': models.Profile.objects.get_popular_profiles()})
 
 
 def login(request):
-    return render(request, 'login.html', context={'tags': TAGS, 'members': MEMBERS})
+    return render(request, 'login.html', context={'tags': models.Tag.objects.get_popular_tags(),
+                                                  'members': models.Profile.objects.get_popular_profiles()})
 
 
 def signup(request):
-    return render(request, 'signup.html', context={'tags': TAGS, 'members': MEMBERS})
+    return render(request, 'signup.html', context={'tags': models.Tag.objects.get_popular_tags(),
+                                                   'members': models.Profile.objects.get_popular_profiles()})
 
 
 def settings(request):
-    return render(request, 'settings.html', context={'tags': TAGS, 'members': MEMBERS})
+    return render(request, 'settings.html', context={'tags': models.Tag.objects.get_popular_tags(),
+                                                     'members': models.Profile.objects.get_popular_profiles()})
 
 
 def ask(request):
-    return render(request, 'ask.html', context={'tags': TAGS, 'members': MEMBERS})
+    return render(request, 'ask.html', context={'tags': models.Tag.objects.get_popular_tags(),
+                                                'members': models.Profile.objects.get_popular_profiles()})
 
 
 def tag(request, tag_name):
-    questions = paginate(tag_selection(QUESTIONS, tag_name), request)
-    page_obj = paginate(tag_selection(QUESTIONS, tag_name), request)
+    questions = paginate(models.Question.objects.get_questions_by_tag(tag_name), request)
+    page_obj = paginate(models.Question.objects.get_questions_by_tag(tag_name), request)
     return render(request, 'tag.html',
-                  context={'tag_name': tag_name, 'questions': questions, 'page_obj': page_obj, 'tags': TAGS,
-                           'members': MEMBERS})
+                  context={'tag_name': tag_name, 'questions': questions, 'page_obj': page_obj,
+                           'tags': models.Tag.objects.get_popular_tags(),
+                           'members': models.Profile.objects.get_popular_profiles()})
 
 
 def hot(request):
-    page_obj = paginate(QUESTIONS, request)
-    questions = paginate(QUESTIONS, request)
+    questions = paginate(models.Question.objects.get_hot_questions(), request)
+    page_obj = paginate(models.Question.objects.get_hot_questions(), request)
     return render(request, 'index.html',
-                  context={'questions': questions, 'page_obj': page_obj, 'tags': TAGS, 'members': MEMBERS})
+                  context={'questions': questions, 'page_obj': page_obj,
+                           'tags': models.Tag.objects.get_popular_tags(),
+                           'members': models.Profile.objects.get_popular_profiles()})
