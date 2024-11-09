@@ -80,8 +80,8 @@ class QuestionLike(models.Model):
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
     like = models.BooleanField(default=0)
 
-    # class Meta:
-    #     unique_together = ('question', 'author')
+    class Meta:
+        unique_together = ('question', 'author')
 
     def __str__(self):
         return self.author
@@ -92,8 +92,8 @@ class AnswerLike(models.Model):
     answer = models.ForeignKey('Answer', on_delete=models.CASCADE)
     like = models.BooleanField(default=0)
 
-    # class Meta:
-    #     unique_together = ('answer', 'author')
+    class Meta:
+        unique_together = ('answer', 'author')
 
     def __str__(self):
         return self.author
