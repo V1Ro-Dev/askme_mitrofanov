@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import Http404
 
 
 class QuestionManager(models.Manager):
@@ -97,3 +99,16 @@ class AnswerLike(models.Model):
 
     def __str__(self):
         return self.author
+
+
+def paginate(object_list, request, per_page=3):
+    paginator = Paginator(object_list, per_page)
+    page = request.GET.get('page', 1)
+    try:
+        paginator.page(page)
+    except PageNotAnInteger:
+        raise Http404("Page not found")
+    except EmptyPage:
+        raise Http404("Page not found")
+    else:
+        return paginator.page(page)
