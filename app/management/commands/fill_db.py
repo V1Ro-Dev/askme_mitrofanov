@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from app.models import Question, Answer, Profile, AnswerLike, QuestionLike, Tag, User
 from faker import Faker
 import random
@@ -23,22 +22,27 @@ class Command(BaseCommand):
         profiles_size = ratio
         answers_size = ratio * 100
 
-        profiles = [
-            Profile(
-                user=User.objects.create_user(
-                    username=f'{fake.user_name()} {i}',
-                    password=fake.password(),
-                    email=f'{fake.user_name()}{i}@mail.ru'
-                )
-            ) for i in range(profiles_size)]
+        usernames = [f'{fake.user_name()}_{i}' for i in range(profiles_size)]
+        emails = [f'{username}@mail.ru' for username in usernames]
+
+        users = [User(username=username, email=email, password=fake.password()) for username, email in
+                 zip(usernames, emails)]
+        User.objects.bulk_create(users)
+
+        users = User.objects.all()[:profiles_size]
+        profiles = [Profile(user=user) for user in users]
 
         Profile.objects.bulk_create(profiles)
         profiles = Profile.objects
 
-        tags = [Tag(name=fake.word()) for i in range(tags_size)]
+        print('profiles ended at:', datetime.now())
+
+        tags = [Tag(name=f'{fake.word()}{i}') for i in range(tags_size)]
 
         Tag.objects.bulk_create(tags)
         tags = Tag.objects
+
+        print('tags ended at:', datetime.now())
 
         questions_lst = [
             Question(
@@ -58,6 +62,8 @@ class Command(BaseCommand):
 
         questions = Question.objects
 
+        print('questions ended at:', datetime.now())
+
         answers_lst = []
         for i in range(answers_size):
             ind = random.randint(1, questions_size)
@@ -74,6 +80,8 @@ class Command(BaseCommand):
         Question.objects.bulk_update(questions_lst, ['amount_of_answers'])
         Answer.objects.bulk_create(answers_lst)
         answers = Answer.objects
+
+        print('answers ended at:', datetime.now())
 
         question_likes = []
         question_likes_set = set()
@@ -97,6 +105,8 @@ class Command(BaseCommand):
         Question.objects.bulk_update(questions_lst, ['likes'])
         QuestionLike.objects.bulk_create(question_likes)
 
+        print('question likes ended at:', datetime.now())
+
         answer_likes = []
         ans_likes_set = set()
         for i in range(likes_size // 2):
@@ -119,4 +129,5 @@ class Command(BaseCommand):
 
         Answer.objects.bulk_update(answers_lst, ['likes'])
         AnswerLike.objects.bulk_create(answer_likes)
+
         print('ended at:', datetime.now())
