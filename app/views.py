@@ -1,6 +1,11 @@
-from django.shortcuts import render, Http404
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.urls import reverse
 from app import models
+from app.forms import LoginForm, SignupForm, SettingsForm
 
 
 def paginate(object_list, request, per_page=3):
@@ -8,69 +13,114 @@ def paginate(object_list, request, per_page=3):
     page = request.GET.get('page', 1)
     try:
         paginator.page(page)
-    except PageNotAnInteger:
+    except (PageNotAnInteger, EmptyPage):
         raise Http404("Page not found")
-    except EmptyPage:
-        raise Http404("Page not found")
-    else:
-        return paginator.page(page)
+    return paginator.page(page)
+
+def continue_redirect(request):
+    next_url = request.GET.get('next', reverse('index'))
+    return redirect(next_url)
 
 
 def index(request):
     questions = paginate(models.Question.objects.get_new_questions(), request)
     return render(request, 'index.html',
-                  context={'questions': questions, 'page_obj': questions,
+                  context={'questions': questions,
+                           'page_obj': questions,
                            'tags': models.Tag.objects.get_popular_tags(),
-                           'members': models.Profile.objects.get_popular_profiles()})
+                           'members': models.Profile.objects.get_popular_profiles()}
+                  )
 
 
 def question(request, question_id):
-    try:
-        question_item = models.Question.objects.get(id=question_id)
-    except models.Question.DoesNotExist:
-        raise Http404('Question does not exist')
+    question_item = get_object_or_404(models.Question,id=question_id)
     answers = paginate(models.Answer.objects.get_answers(question_id), request)
     return render(request, 'question.html',
-                  context={'question': question_item, 'answers': answers,
+                  context={'question': question_item,
+                           'answers': answers,
                            'page_obj': answers, 'tags': models.Tag.objects.get_popular_tags(),
-                           'members': models.Profile.objects.get_popular_profiles()})
+                           'members': models.Profile.objects.get_popular_profiles()}
+                  )
 
 
 def login(request):
-    return render(request, 'login.html', context={'tags': models.Tag.objects.get_popular_tags(),
-                                                  'members': models.Profile.objects.get_popular_profiles()})
+    if request.method == 'POST':
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            user = auth.authenticate(request, **login_form.cleaned_data)
+            if user:
+                auth.login(request, user)
+                return redirect(request.GET.get("continue", "index"))
+            else:
+                login_form.add_error(None, 'Incorrect username or password')
+    else:
+        login_form = LoginForm()
+    return render(request, 'login.html',
+                  context={'tags': models.Tag.objects.get_popular_tags(),
+                          'members': models.Profile.objects.get_popular_profiles(),
+                           'form': login_form}
+                  )
+@login_required
+def logout(request):
+    auth.logout(request)
+    return redirect(request.GET.get("continue", "index"))
 
 
 def signup(request):
-    return render(request, 'signup.html', context={'tags': models.Tag.objects.get_popular_tags(),
-                                                   'members': models.Profile.objects.get_popular_profiles()})
+    if request.method == 'POST':
+        signup_form = SignupForm(request.POST, request.FILES)
+        if signup_form.is_valid():
+            user = signup_form.save()
+            auth.login(request, user)
+            return redirect('index')
+    else:
+        signup_form = SignupForm()
+    return render(request, 'signup.html',
+                  context={'tags': models.Tag.objects.get_popular_tags(),
+                           'members': models.Profile.objects.get_popular_profiles(),
+                           'form': signup_form}
+                  )
 
-
+@login_required()
 def settings(request):
-    return render(request, 'settings.html', context={'tags': models.Tag.objects.get_popular_tags(),
-                                                     'members': models.Profile.objects.get_popular_profiles()})
+    if request.method == 'POST':
+        settings_form = SettingsForm(request.user, request.POST, request.FILES)
+        if settings_form.is_valid():
+            settings_form.save()
+            return redirect('settings')
+    else:
+        settings_form = SettingsForm(request.user)
+    return render(request, 'settings.html',
+                  context={'tags': models.Tag.objects.get_popular_tags(),
+                         'members': models.Profile.objects.get_popular_profiles(),
+                           'form': settings_form}
+                  )
 
 
 def ask(request):
-    return render(request, 'ask.html', context={'tags': models.Tag.objects.get_popular_tags(),
-                                                'members': models.Profile.objects.get_popular_profiles()})
+    return render(request, 'ask.html',
+                  context={'tags': models.Tag.objects.get_popular_tags(),
+                            'members': models.Profile.objects.get_popular_profiles()}
+                  )
 
 
 def tag(request, tag_name):
-    try:
-        models.Tag.objects.get(name=tag_name)
-    except models.Tag.DoesNotExist:
-        raise Http404('Tag does not exist')
+    get_object_or_404(models.Tag, name=tag_name)
     questions = paginate(models.Question.objects.get_questions_by_tag(tag_name), request)
     return render(request, 'tag.html',
-                  context={'tag_name': tag_name, 'questions': questions, 'page_obj': questions,
+                  context={'tag_name': tag_name,
+                           'questions': questions,
+                           'page_obj': questions,
                            'tags': models.Tag.objects.get_popular_tags(),
-                           'members': models.Profile.objects.get_popular_profiles()})
+                           'members': models.Profile.objects.get_popular_profiles()}
+                  )
 
 
 def hot(request):
     questions = paginate(models.Question.objects.get_hot_questions(), request)
     return render(request, 'index.html',
-                  context={'questions': questions, 'page_obj': questions,
+                  context={'questions': questions,
+                           'page_obj': questions,
                            'tags': models.Tag.objects.get_popular_tags(),
-                           'members': models.Profile.objects.get_popular_profiles()})
+                           'members': models.Profile.objects.get_popular_profiles()}
+                  )

@@ -26,11 +26,19 @@
                 <div class="d-flex gap-1">
                     <img src="{% static '/img/profile.jpg' %}" alt="Avatar" class="img-thumbnail" width="50" height="50">
                     <div>
+                        {% if user.is_authenticated %}
                         <div>
-                            dr pepper
+                            {{ user.username }}
                         </div>
-                        <a href="{% url 'settings' %}">settings</a>
-                        <a href="#">log out</a>
+                        <a href="{% url 'settings' %}">Settings</a>
+                        <a href="{% url 'logout' %}?continue={{ request.get_full_path }}">Log out</a>
+                        {% else %}
+                        <div>
+                            <br>
+                        </div>
+                        <a href="{% url 'login' %}?continue={{ request.get_full_path }}">Log in</a>
+                        <a href="{% url 'signup' %}">Sign Up</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
