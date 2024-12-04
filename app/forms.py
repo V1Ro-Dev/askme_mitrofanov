@@ -132,24 +132,49 @@ class AskForm(forms.ModelForm):
             raise ValidationError('This title already exists')
         if len(title) < 1:
             raise ValidationError('Title cannot be empty')
+        return title
 
     def clean_content(self):
         content = self.cleaned_data['content']
         if len(content) < 1:
             raise ValidationError('Content cannot be empty')
+        return content
 
     def save(self):
         profile = models.Profile.objects.get(user=self.user)
-        question = models.Question(profile=profile, title=self.cleaned_data['title'],
+        question = models.Question(author=profile, title=self.cleaned_data['title'],
                                    content=self.cleaned_data['content'])
         question.save()
 
         tags = self.cleaned_data.get('tags')
-        tags_list = tags.strip().split(', ')
 
         tags_set = set()
-        for i in tags_list:
+        for i in tags:
             tags_set.add(models.Tag.objects.get_or_create(name=i.strip())[0])
 
         question.tags.set(list(tags_set))
         return question
+
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = models.Answer
+        fields = ('content',)
+
+    def __init__(self, user, question_id, *args, **kwargs):
+        self.user = user
+        self.question_id = question_id
+        super().__init__()
+
+    def clean_content(self):
+        if len(self.cleaned_data['content']) < 1:
+            raise ValidationError('Content cannot be empty')
+
+    def save(self):
+        question = models.Question.objects.get(id=self.question_id)
+        question.amount_of_answers += 1
+        question.save()
+        author = models.Profile.objects.get(user=self.user)
+        answer = models.Answer(author=author, question=question, content=self.cleaned_data['content'])
+        answer.save()
+        return answer

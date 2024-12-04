@@ -1,5 +1,7 @@
 {%extends 'layouts/base.html' %}
 
+{% load bootstrap5 %}
+
 {% load static %}
 
 {% block content %}
@@ -10,7 +12,7 @@
                             <div class="border mb-2" style="height: 170px">
                                 <img src="{% static '/img/amogus.jpg' %}" alt="Avatar" class="img-fluid" width="100" height="100">
                             </div>
-                            <input class="form-control" type="number" value="5" placeholder="Default input"
+                            <input class="form-control" type="number" value="{{ question.likes }}" placeholder="Default input"
                                    aria-label="default input example">
                         </div>
                         <div class="col-9">
@@ -24,7 +26,6 @@
                             </div>
                         </div>
                     </div>
-    <hr>
     {% for answer in answers %}
 
     {% include 'components/answer_item.html' %}
@@ -34,10 +35,10 @@
 
     <hr>
 
-    <form>
+    <form method="POST">
+        {% csrf_token %}
         <div class="form-floating">
-            <textarea class="form-control mb-3" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
-            <label for="floatingTextarea2">Enter your answer here</label>
+            {% bootstrap_form form %}
             <div class="row-3 gap-3">
                 <button class="btn custom-btn" type="submit">Answer</button>
             </div>

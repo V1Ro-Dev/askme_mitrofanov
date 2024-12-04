@@ -1,12 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import Http404
 
 
 class QuestionManager(models.Manager):
     def get_new_questions(self):
-        return self.order_by('created_at')
+        return self.order_by('-created_at')
 
     def get_hot_questions(self):
         return self.order_by('-likes')

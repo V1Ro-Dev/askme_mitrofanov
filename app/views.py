@@ -1,10 +1,14 @@
+from math import ceil
+
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.urls import reverse
+
 from app import models
-from app.forms import LoginForm, SignupForm, SettingsForm, AskForm
+from app.forms import LoginForm, SignupForm, SettingsForm, AskForm, AnswerForm
 
 
 def paginate(object_list, request, per_page=3):
@@ -30,11 +34,23 @@ def index(request):
 def question(request, question_id):
     question_item = get_object_or_404(models.Question, id=question_id)
     answers = paginate(models.Answer.objects.get_answers(question_id), request)
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
+        ans_form = AnswerForm(request.user, question_id, request.POST)
+        if ans_form.is_valid():
+            ans_form.save()
+            last_page = ceil(len(models.Answer.objects.all()) // 3)
+            redirect_url = reverse(f'question/{question_id}') + f'?page={last_page}'
+            return redirect_url
+    else:
+        ans_form = AnswerForm(request.user, question_id)
     return render(request, 'question.html',
                   context={'question': question_item,
                            'answers': answers,
                            'page_obj': answers, 'tags': models.Tag.objects.get_popular_tags(),
-                           'members': models.Profile.objects.get_popular_profiles()}
+                           'members': models.Profile.objects.get_popular_profiles(),
+                           'form': ans_form}
                   )
 
 
