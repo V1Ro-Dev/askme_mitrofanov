@@ -164,11 +164,12 @@ class AnswerForm(forms.ModelForm):
     def __init__(self, user, question_id, *args, **kwargs):
         self.user = user
         self.question_id = question_id
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def clean_content(self):
         if len(self.cleaned_data['content']) < 1:
             raise ValidationError('Content cannot be empty')
+        return self.cleaned_data['content']
 
     def save(self):
         question = models.Question.objects.get(id=self.question_id)

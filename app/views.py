@@ -40,9 +40,9 @@ def question(request, question_id):
         ans_form = AnswerForm(request.user, question_id, request.POST)
         if ans_form.is_valid():
             ans_form.save()
-            last_page = ceil(len(models.Answer.objects.all()) // 3)
-            redirect_url = reverse(f'question/{question_id}') + f'?page={last_page}'
-            return redirect_url
+            last_page = ceil(models.Answer.objects.filter(question_id=question_id).count() / 3)
+            redirect_url = reverse('question', args=[question_id]) + f'?page={last_page}'
+            return redirect(redirect_url)
     else:
         ans_form = AnswerForm(request.user, question_id)
     return render(request, 'question.html',

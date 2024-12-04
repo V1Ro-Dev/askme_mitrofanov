@@ -16,7 +16,7 @@ class QuestionManager(models.Manager):
 class AnswerManager(models.Manager):
 
     def get_answers(self, question):
-        return self.filter(question=question).order_by('-created_at')
+        return self.filter(question=question).order_by('created_at')
 
 
 class TagManager(models.Manager):
