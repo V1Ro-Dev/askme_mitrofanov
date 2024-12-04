@@ -1,5 +1,6 @@
 {%extends 'layouts/base.html' %}
 
+{% load bootstrap5 %}
 
 {% block content %}
 
@@ -7,32 +8,20 @@
     <h1>New Question</h1>
 </div>
 
-<form>
+<form method="POST">
+    {% csrf_token %}
     <div class="row mb-3">
-      <label class="col-sm-1 col-form-label">Title</label>
       <div class="col-sm-11">
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" placeholder="Enter Title" required maxlength="30"></textarea>
+          {% bootstrap_form form %}
       </div>
     </div>
 
-    <div class="row mb-3">
-      <label class="col-sm-1 col-form-label">Text</label>
-      <div class="col-sm-11">
-        <textarea class="form-control" id="exampleFormControlTextarea2" rows="10" placeholder="Enter Text" required maxlength="300"></textarea>
-      </div>
-    </div>
+    {% buttons %}
 
-    <div class="row mb-3">
-      <label class="col-sm-1 col-form-label">Tags</label>
-      <div class="col-sm-11">
-        <textarea class="form-control" id="exampleFormControlTextarea3" rows="1" placeholder="Enter Tags" required maxlength="100"></textarea>
-      </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-sm-11 offset-sm-1">
-            <button class="btn btn-outline-success" type="submit">Ask!</button>
-        </div>
-    </div>
+    <button class="btn btn-outline-success" type="submit">Ask!</button>
+
+    {% endbuttons %}
+
 </form>
 
 {% endblock %}

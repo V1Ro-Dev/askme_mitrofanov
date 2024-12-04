@@ -4,7 +4,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from app import models
-from app.forms import LoginForm, SignupForm, SettingsForm
+from app.forms import LoginForm, SignupForm, SettingsForm, AskForm
 
 
 def paginate(object_list, request, per_page=3):
@@ -28,7 +28,7 @@ def index(request):
 
 
 def question(request, question_id):
-    question_item = get_object_or_404(models.Question,id=question_id)
+    question_item = get_object_or_404(models.Question, id=question_id)
     answers = paginate(models.Answer.objects.get_answers(question_id), request)
     return render(request, 'question.html',
                   context={'question': question_item,
@@ -52,9 +52,11 @@ def login(request):
         login_form = LoginForm()
     return render(request, 'login.html',
                   context={'tags': models.Tag.objects.get_popular_tags(),
-                          'members': models.Profile.objects.get_popular_profiles(),
+                           'members': models.Profile.objects.get_popular_profiles(),
                            'form': login_form}
                   )
+
+
 @login_required
 def logout(request):
     auth.logout(request)
@@ -76,6 +78,7 @@ def signup(request):
                            'form': signup_form}
                   )
 
+
 @login_required()
 def settings(request):
     if request.method == 'POST':
@@ -88,15 +91,23 @@ def settings(request):
         settings_form = SettingsForm(request.user, instance=request.user)
     return render(request, 'settings.html',
                   context={'tags': models.Tag.objects.get_popular_tags(),
-                         'members': models.Profile.objects.get_popular_profiles(),
+                           'members': models.Profile.objects.get_popular_profiles(),
                            'form': settings_form}
                   )
 
 
 def ask(request):
+    if request.method == 'POST':
+        ask_form = AskForm(request.user, request.POST)
+        if ask_form.is_valid():
+            question = ask_form.save()
+            return redirect('question', question_id=question.id)
+    else:
+        ask_form = AskForm(request.user)
     return render(request, 'ask.html',
                   context={'tags': models.Tag.objects.get_popular_tags(),
-                            'members': models.Profile.objects.get_popular_profiles()}
+                           'members': models.Profile.objects.get_popular_profiles(),
+                           'form': ask_form}
                   )
 
 
