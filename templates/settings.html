@@ -11,9 +11,12 @@
 </div>
 
 <form method="POST">
+    {% csrf_token %}
     <div class="row mb-3">
         <div class="col-sm-5">
           {% bootstrap_form form %}
+
+          <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="img-thumbnail mb-3" style="width: 150px; height: 150px;">
 
           {% buttons %}
 

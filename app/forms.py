@@ -42,14 +42,30 @@ class SignupForm(forms.Form):
         return user
 
 
-class SettingsForm(forms.Form):
-    username = forms.CharField(required=True)
-    email = forms.EmailField(required=True)
+class SettingsForm(forms.ModelForm):
+    password_confirmation = forms.CharField(widget=forms.PasswordInput, required=True)
     avatar = forms.ImageField(required=False)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+        widgets = {
+            'password': forms.PasswordInput,
+        }
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirmation = cleaned_data.get('password_confirmation')
+        if len(password) < 8:
+            raise ValidationError('Password is too short')
+        if password and password != password_confirmation:
+            raise ValidationError("Passwords don't match")
+        return cleaned_data
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -64,11 +80,21 @@ class SettingsForm(forms.Form):
         return email
 
     def save(self):
-        self.user.profile.username = self.cleaned_data['username']
-        self.user.profile.email = self.cleaned_data['email']
-        self.user.profile.avatar = self.cleaned_data['avatar']
-        self.user.profile.save()
-        return self.user
+        user = super().save()
+        if self.cleaned_data.get('password') != '':
+            user.set_password(self.cleaned_data['password'])
+        user.username = self.cleaned_data.get('username')
+        user.email = self.cleaned_data.get('email')
+        user.save()
+
+        profile = user.profile
+        print(self.cleaned_data.get('avatar'))
+        if self.cleaned_data.get('avatar'):
+            print('Сохраняем')
+            profile.avatar = self.cleaned_data.get('avatar')
+            profile.save()
+
+        return user
 
 
 

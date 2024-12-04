@@ -23,16 +23,19 @@
                     <button class="btn btn-outline-success" type="submit">Ask</button>
                 </form>
 
+                {% if user.is_authenticated %}
                 <div class="d-flex gap-1">
-                    <img src="{% static '/img/profile.jpg' %}" alt="Avatar" class="img-thumbnail" width="50" height="50">
+                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="img-thumbnail" width="50" height="50">
                     <div>
-                        {% if user.is_authenticated %}
                         <div>
                             {{ user.username }}
                         </div>
                         <a href="{% url 'settings' %}">Settings</a>
                         <a href="{% url 'logout' %}?continue={{ request.get_full_path }}">Log out</a>
-                        {% else %}
+                {% else %}
+                <div class="d-flex gap-1">
+                    <img src="{% static 'img/profile.jpg' %}" alt="Avatar" class="img-thumbnail" width="50" height="50">
+                    <div>
                         <div>
                             <br>
                         </div>

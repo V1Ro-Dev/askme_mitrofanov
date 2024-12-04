@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.urls import reverse
 from app import models
 from app.forms import LoginForm, SignupForm, SettingsForm
 
@@ -16,10 +15,6 @@ def paginate(object_list, request, per_page=3):
     except (PageNotAnInteger, EmptyPage):
         raise Http404("Page not found")
     return paginator.page(page)
-
-def continue_redirect(request):
-    next_url = request.GET.get('next', reverse('index'))
-    return redirect(next_url)
 
 
 def index(request):
@@ -84,12 +79,13 @@ def signup(request):
 @login_required()
 def settings(request):
     if request.method == 'POST':
-        settings_form = SettingsForm(request.user, request.POST, request.FILES)
+        settings_form = SettingsForm(request.user, request.POST, request.FILES, instance=request.user)
         if settings_form.is_valid():
-            settings_form.save()
+            user = settings_form.save()
+            auth.login(request, user)
             return redirect('settings')
     else:
-        settings_form = SettingsForm(request.user)
+        settings_form = SettingsForm(request.user, instance=request.user)
     return render(request, 'settings.html',
                   context={'tags': models.Tag.objects.get_popular_tags(),
                          'members': models.Profile.objects.get_popular_profiles(),
