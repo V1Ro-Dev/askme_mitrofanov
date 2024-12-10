@@ -21,3 +21,18 @@
 .custom-btn:hover {
     background-color: darkgrey;
 }
+
+.like-button {
+    background-color: #ffcccb;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.like-button:hover {
+    background-color: #ff9999;
+}

@@ -2,10 +2,11 @@ from math import ceil
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from app import models
 from app.forms import LoginForm, SignupForm, SettingsForm, AskForm, AnswerForm
@@ -146,3 +147,24 @@ def hot(request):
                            'tags': models.Tag.objects.get_popular_tags(),
                            'members': models.Profile.objects.get_popular_profiles()}
                   )
+
+
+@require_POST
+@login_required(login_url="login", redirect_field_name="continue")
+def like(request, question_id):
+    profile = get_object_or_404(models.Profile, user=request.user)
+    question = get_object_or_404(models.Question, pk=question_id)
+    like, created_at = models.QuestionLike.objects.get_or_create(author=profile, question=question)
+
+    if not created_at:
+        like.delete()
+        question.likes -= 1
+    else:
+        question.likes += 1
+    question.save()
+
+    return JsonResponse({'likes_count': question.likes})
+
+
+
+
