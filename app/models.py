@@ -71,6 +71,7 @@ class Answer(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.SET_NULL, blank=True, null=True, default="")
     likes = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    correct = models.BooleanField(default=False)
 
     objects = AnswerManager()
 

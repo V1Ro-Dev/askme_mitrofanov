@@ -80,7 +80,36 @@ const answerLike = () => {
     }
 }
 
+const correctAnswer = () => {
+    const question_id = document.querySelector('.question-card').dataset.id
+    const cards = document.querySelectorAll('.answer-card')
+    for (const card of cards){
+        const correctButton = card.querySelector('.form-check-input')
+        const id = card.dataset.id
+
+        correctButton.addEventListener('change', () => {
+            const request = new Request(`/correctAnswer/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    question_id: question_id,
+                    answer_id: id
+                })
+            })
+            fetch(request)
+                .then((response) => response.json())
+                .then((data) => {
+                        correctButton.checked = data.correct;
+                })
+        })
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     questionLike();
     answerLike();
+    correctAnswer()
 });

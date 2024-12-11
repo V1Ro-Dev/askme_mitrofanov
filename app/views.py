@@ -192,4 +192,18 @@ def answerLike(request):
     return JsonResponse({'likes_count': answer.likes, 'liked': liked})
 
 
+@require_POST
+@login_required(redirect_field_name='continue')
+def correctAnswer(request):
+    query_params = json.loads(request.body)
+    question = get_object_or_404(models.Question, pk=query_params['question_id'])
+    answer = get_object_or_404(models.Answer, pk=query_params['answer_id'], question=question)
+
+    if answer.correct:
+        answer.correct = False
+    else:
+        answer.correct = True
+    answer.save()
+    return JsonResponse({'correct': answer.correct})
+
 

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path, include
+from django.urls import path
 from app import views
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('question/<int:question_id>/', views.question, name='question'),
     path('questionLike/', views.questionLike, name='questionLike'),
     path('answerLike/', views.answerLike, name='answerLike'),
+    path('correctAnswer/', views.correctAnswer, name='correctAnswer'),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
