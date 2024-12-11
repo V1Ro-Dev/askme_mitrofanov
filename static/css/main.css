@@ -32,7 +32,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .like-button:hover {
     background-color: #ff9999;
+}
+
+.like-button.liked {
+    background-color: #ff9999;
+    color: white;
+    transform: scale(1.1);
+}
+
+.like-button-answer {
+    background-color: #ffcccb;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.like-button-answer:hover {
+    background-color: #ff9999;
+}
+
+.like-button-answer.liked {
+    background-color: #ff9999;
+    color: white;
+    transform: scale(1.1);
 }

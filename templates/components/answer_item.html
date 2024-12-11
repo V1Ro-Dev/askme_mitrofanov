@@ -1,23 +1,28 @@
 {% load static %}
 
-<div class="card w-100" style="width: 18rem;">
+<div class="card w-100 answer-card" style="width: 18rem;" data-id="{{ answer.id }}">
     <div class="card-body">
         <div class="row">
             <div class="col-3">
                 <div class="border mb-2" style="height: 100px; text-align: center" >
                     <img src="{% static '/img/amogus.jpg' %}" alt="Avatar" class="img-fluid" width="50" height="50">
                 </div>
-                <input class="form-control" type="number" value={{answer.likes}} placeholder="Default input"
-                    aria-label="default input example">
+                <button class="like-button-answer" type="submit">
+                    ❤️ <span class="like-counter-answer">{{ answer.likes }}</span>
+                </button>
             </div>
             <div class="col-9">
 
                 <p class="card-text">{{ answer.content }}</p>
                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
-                    <label class="form-check-label" for="flexCheckDefault1">
-                        Correct!
-                    </label>
+                    {% if is_author %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{ answer.id }}" id="flexCheckDefault1" {% if answer.is_correct %}checked{% endif %}>
+                        <label class="form-check-label" for="flexCheckDefault1">
+                            Correct!
+                        </label>
+                    </div>
+                {% endif %}
                 </div>
             </div>
         </div>

@@ -1,5 +1,3 @@
-from math import ceil
-
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -7,9 +5,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-
 from app import models
 from app.forms import LoginForm, SignupForm, SettingsForm, AskForm, AnswerForm
+import json
 
 
 def paginate(object_list, request, per_page=3):
@@ -35,6 +33,9 @@ def index(request):
 def question(request, question_id):
     question_item = get_object_or_404(models.Question, id=question_id)
     answers = paginate(models.Answer.objects.get_answers(question_id), request)
+
+    is_author = request.user == question_item.author.user
+
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect('login')
@@ -50,6 +51,7 @@ def question(request, question_id):
                            'answers': answers,
                            'page_obj': answers, 'tags': models.Tag.objects.get_popular_tags(),
                            'members': models.Profile.objects.get_popular_profiles(),
+                           'is_author': is_author,
                            'form': ans_form}
                   )
 
@@ -150,21 +152,44 @@ def hot(request):
 
 
 @require_POST
-@login_required(login_url="login", redirect_field_name="continue")
-def like(request, question_id):
+@login_required(redirect_field_name='continue')
+def questionLike(request):
+    query_params = json.loads(request.body)
     profile = get_object_or_404(models.Profile, user=request.user)
-    question = get_object_or_404(models.Question, pk=question_id)
+    question = get_object_or_404(models.Question, pk=query_params['question_id'])
     like, created_at = models.QuestionLike.objects.get_or_create(author=profile, question=question)
 
     if not created_at:
         like.delete()
         question.likes -= 1
+        liked = False
     else:
         question.likes += 1
+        liked = True
     question.save()
 
-    return JsonResponse({'likes_count': question.likes})
+    return JsonResponse({'likes_count': question.likes, 'liked': liked})
 
+
+@require_POST
+@login_required(redirect_field_name='continue')
+def answerLike(request):
+    query_params = json.loads(request.body)
+    profile = get_object_or_404(models.Profile, user=request.user)
+    question = get_object_or_404(models.Question, pk=query_params['question_id'])
+    answer = get_object_or_404(models.Answer, pk=query_params['answer_id'], question=question)
+    like, created_at = models.AnswerLike.objects.get_or_create(answer=answer, author=profile)
+
+    if not created_at:
+        like.delete()
+        answer.likes -= 1
+        liked = False
+    else:
+        answer.likes += 1
+        liked = True
+    answer.save()
+
+    return JsonResponse({'likes_count': answer.likes, 'liked': liked})
 
 
 

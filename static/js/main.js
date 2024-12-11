@@ -14,26 +14,73 @@ function getCookie(name) {
     return cookieValue;
 }
 
-const init = () => {
-    const cards = document.querySelectorAll('.card')
+const questionLike = () => {
+    const cards = document.querySelectorAll('.question-card')
     for (const card of cards){
         const likeButton = card.querySelector('.like-button')
         const likeCounter = card.querySelector('.like-counter')
         const id = card.dataset.id
 
         likeButton.addEventListener('click', () => {
-            const request = new Request(`/like/${id}/`, {
+            const request = new Request(`/questionLike/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken'),
-                }
+                },
+                body: JSON.stringify({
+                    question_id: id
+                })
             })
             fetch(request)
                 .then((response) => response.json())
-                .then((data) => likeCounter.innerHTML = data.likes_count)
+                .then((data) => {
+                    likeCounter.innerHTML = data.likes_count;
+                    if (data.liked) {
+                        likeButton.classList.add('liked');
+                    } else {
+                        likeButton.classList.remove('liked');
+                    }
+                })
         })
     }
 }
 
-init()
+const answerLike = () => {
+    const question_id = document.querySelector('.question-card').dataset.id
+    const cards = document.querySelectorAll('.answer-card')
+    for (const card of cards){
+        const likeButton = card.querySelector('.like-button-answer')
+        const likeCounter = card.querySelector('.like-counter-answer')
+        const id = card.dataset.id
+
+        likeButton.addEventListener('click', () => {
+            const request = new Request(`/answerLike/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    question_id: question_id,
+                    answer_id: id
+                })
+            })
+            fetch(request)
+                .then((response) => response.json())
+                .then((data) => {
+                    likeCounter.innerHTML = data.likes_count
+                    if (data.liked) {
+                        likeButton.classList.add('liked');
+                    } else {
+                        likeButton.classList.remove('liked');
+                    }
+                })
+        })
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    questionLike();
+    answerLike();
+});

@@ -6,13 +6,15 @@
 
 {% block content %}
 <div class="d-flex flex-column gap-3">
+                <div class="card question-card" style="border: none" data-id="{{ question.id }}">
                     <div class="row">
                         <div class="col-3">
                             <div class="border mb-2" style="height: 170px">
                                 <img src="{% static '/img/amogus.jpg' %}" alt="Avatar" class="img-fluid" width="100" height="100">
                             </div>
-                            <input class="form-control" type="number" value="{{ question.likes }}" placeholder="Default input"
-                                   aria-label="default input example">
+                            <button class="like-button" type="submit">
+                    ❤️          <span class="like-counter">{{ question.likes }}</span>
+                            </button>
                         </div>
                         <div class="col-9">
                             <h4 class="card-title">{{question.title}}</h4>
@@ -25,6 +27,7 @@
                             </div>
                         </div>
                     </div>
+                </div>
     {% for answer in answers %}
 
     {% include 'components/answer_item.html' %}
