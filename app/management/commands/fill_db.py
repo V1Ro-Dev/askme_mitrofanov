@@ -38,7 +38,6 @@ class Command(BaseCommand):
         print('profiles ended at:', datetime.now())
 
         tags = [Tag(name=f'{fake.word()}{i}') for i in range(tags_size)]
-
         Tag.objects.bulk_create(tags)
         tags = Tag.objects
 

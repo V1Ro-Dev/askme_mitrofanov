@@ -1,0 +1,32 @@
+upstream askme_mitrofanov {
+	server 127.0.0.1:8000;
+}
+
+proxy_cache_path /var/www/nginx_cache levels=1:2 keys_zone=custom_cache:10m inactive=24h max_size=50m;
+
+server {
+	listen 80 default_server;
+	server_name askme_mitrofanov.com;
+
+	location /static {
+		root /var/www/askme_mitrofanov/;
+		add_header Cache-Control "public, max-age=3600";
+		gzip on;
+		gzip_types text/css application/javascript;
+	}
+
+	location ^~ /uploads {
+		root /var/www/askme_mitrofanov/;
+		add_header Cache-Control "public, max-age=3600";
+		gzip on;
+		gzip_types image/jpeg image/png;
+	}
+
+	location / {
+		proxy_pass http://askme_mitrofanov;
+		proxy_set_header Host $host;
+		proxy_cache Ask_Project_zone;
+		proxy_cache_valid 200 302 10m;
+		proxy_cache_valid 404	   1m;
+	}
+}
