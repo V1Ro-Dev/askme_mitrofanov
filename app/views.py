@@ -1,5 +1,11 @@
+import jwt
+import time
+import json
+from cent import Client, PublishRequest
 from django.contrib import auth
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.forms import model_to_dict
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -7,7 +13,21 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from app import models
 from app.forms import LoginForm, SignupForm, SettingsForm, AskForm, AnswerForm
-import json
+
+client = Client(settings.CENTRIFUGO_API_URL, settings.CENTRIFUGO_API_KEY)
+
+
+def get_centrifugo_data(user_id, channel):
+    ws_url = settings.CENTRIFUGO_WS_URL
+    secret = settings.CENTRIFUGO_SECRET
+    token = jwt.encode({"sub": str(user_id), "exp": int(time.time()) + 10 * 60}, secret, algorithm="HS256")
+    return {
+        'centrifugo': {
+            'token': token,
+            'url': ws_url,
+            'channel': channel
+        }
+    }
 
 
 def paginate(object_list, request, per_page=3):
@@ -41,7 +61,11 @@ def question(request, question_id):
             return redirect('login')
         ans_form = AnswerForm(request.user, question_id, request.POST)
         if ans_form.is_valid():
-            ans_form.save()
+            ans = ans_form.save()
+
+            request = PublishRequest(channel=f"question_{question_id}", data=model_to_dict(ans))
+            client.publish(request)
+
             redirect_url = reverse('question', args=[question_id]) + f'?page={1}'
             return redirect(redirect_url)
     else:
@@ -52,7 +76,8 @@ def question(request, question_id):
                            'page_obj': answers, 'tags': models.Tag.objects.get_popular_tags(),
                            'members': models.Profile.objects.get_popular_profiles(),
                            'is_author': is_author,
-                           'form': ans_form}
+                           'form': ans_form,
+                           **get_centrifugo_data(request.user.id, f"question_{question_id}")}
                   )
 
 
@@ -98,7 +123,7 @@ def signup(request):
 
 
 @login_required()
-def settings(request):
+def profileEdit(request):
     if request.method == 'POST':
         settings_form = SettingsForm(request.user, request.POST, request.FILES, instance=request.user)
         if settings_form.is_valid():
@@ -205,5 +230,3 @@ def correctAnswer(request):
         answer.correct = True
     answer.save()
     return JsonResponse({'correct': answer.correct})
-
-

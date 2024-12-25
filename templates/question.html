@@ -28,11 +28,13 @@
                         </div>
                     </div>
                 </div>
-    {% for answer in answers %}
+    <div id="answers-container" class="d-flex flex-column gap-3">
+        {% for answer in answers %}
 
-    {% include 'components/answer_item.html' %}
+        {% include 'components/answer_item.html' %}
 
-    {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 
     <hr>
@@ -55,5 +57,63 @@
 
 
 {% include 'components/pagination.html' %}
+
+<script src="https://unpkg.com/centrifuge@5.0.1/dist/centrifuge.js"></script>
+<script type="text/javascript">
+
+const centrifuge = new Centrifuge("{{ centrifugo.url }}", {
+  token: "{{ centrifugo.token }}"
+});
+
+centrifuge.on('connecting', function (ctx) {
+  console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
+}).on('connected', function (ctx) {
+  console.log(`connected over ${ctx.transport}`);
+}).on('disconnected', function (ctx) {
+  console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
+}).connect();
+
+const sub = centrifuge.newSubscription("{{ centrifugo.channel }}");
+
+sub.on('publication', function (ctx) {
+  const answer_data = ctx.data;
+
+  const answerHtml = `<div class="card w-100 answer-card" style="width: 18rem;" data-id="${answer_data.id}">
+<div class="card-body">
+    <div class="row">
+        <div class="col-3">
+            <div class="border mb-2" style="height: 100px; text-align: center" >
+                <img src="{% static '/img/amogus.jpg' %}" alt="Avatar" class="img-fluid" width="50" height="50">
+            </div>
+            <button class="like-button-answer" type="submit">
+                ❤️ <span class="like-counter-answer">${answer_data.likes}</span>
+            </button>
+        </div>
+        <div class="col-9">
+
+            <p class="card-text">${answer_data.content}</p>
+             <div class="form-check">
+                {% if is_author %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" data-id="${answer_data.id}" id="flexCheckDefault1" {% if answer.correct %}checked{% endif %}>
+                    <label class="form-check-label" for="flexCheckDefault1">
+                        Correct!
+                    </label>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>`;
+  const container = document.getElementById("answers-container");
+  container.insertAdjacentHTML("afterbegin", answerHtml);
+}).on('subscribing', function (ctx) {
+  console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
+}).on('subscribed', function (ctx) {
+  console.log('subscribed', ctx);
+}).on('unsubscribed', function (ctx) {
+  console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
+}).subscribe();
+</script>
 
 {% endblock %}
